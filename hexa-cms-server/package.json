@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "api": "node app.js",
     "demo": "node index.js",
     "promise": "node promise-chain-demo.js",
     "dashboard": "node dashboard-demo.js",
@@ -15,6 +16,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "colors": "^1.4.0"
+    "colors": "^1.4.0",
+    "express": "^5.2.1"
   }
 }
