@@ -1,14 +1,17 @@
-const menus = ['控制台', '文章管理', '分类管理', '评论管理', '系统设置'];
-
-function Sidebar() {
+function Sidebar(props) {
   return (
     <aside className="sidebar">
       <h2>功能菜单</h2>
       <nav>
-        {menus.map((menu, index) => (
-          <a className={index === 1 ? 'menu-item active' : 'menu-item'} href="#content" key={menu}>
-            {menu}
-          </a>
+        {props.menus.map((menu) => (
+          <button
+            className={props.currentMenu === menu.key ? 'menu-item active' : 'menu-item'}
+            key={menu.key}
+            onClick={() => props.onChangeMenu(menu.key)}
+            type="button"
+          >
+            {menu.label}
+          </button>
         ))}
       </nav>
     </aside>

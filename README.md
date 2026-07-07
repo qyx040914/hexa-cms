@@ -11,6 +11,7 @@ Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程和前端组件
 - 模拟 Pull Request 流程
 - 练习冲突解决
 - 使用 React 创建后台管理页面
+- 使用 React State、Props 和条件渲染实现动态页面
 
 ## 当前内容
 
@@ -28,6 +29,17 @@ Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程和前端组件
 - 创建 `Sidebar` 侧边栏组件
 - 创建 `ArticleList` 文章列表组件
 - 在 `App.js` 中组合成左右分栏后台布局
+
+## Class4 React 练习
+
+在 Class3 静态后台基础上，继续完成了 React 状态管理与动态渲染：
+
+- 在 `App.js` 中使用 `useState` 保存当前菜单
+- 通过 Props 将菜单数据、文章数据和切换函数传给子组件
+- 在 `Sidebar` 中点击菜单切换右侧内容
+- 在 `ArticleList` 中使用 `map` 动态渲染文章表格
+- 在 `ArticleList` 中使用 State 实现文章标题搜索
+- 新增 `Dashboard`、`CategoryPanel`、`CommentPanel`、`SystemSettings` 页面组件
 
 本地运行方式：
 
