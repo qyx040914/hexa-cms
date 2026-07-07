@@ -182,6 +182,19 @@
   margin: 18px 0 0;
 }
 
+.error-tip {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #991b1b;
+  margin: 0;
+  padding: 12px 14px;
+}
+
+.api-table .table-row {
+  grid-template-columns: 0.6fr 2fr 1fr;
+}
+
 .stats-grid {
   display: grid;
   gap: 16px;

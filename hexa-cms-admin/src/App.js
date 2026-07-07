@@ -6,11 +6,13 @@ import ArticleList from './components/ArticleList';
 import CategoryPanel from './components/CategoryPanel';
 import CommentPanel from './components/CommentPanel';
 import Dashboard from './components/Dashboard';
+import PostList from './components/PostList';
 import SystemSettings from './components/SystemSettings';
 
 const menus = [
   { key: 'dashboard', label: '控制台' },
   { key: 'article', label: '文章管理' },
+  { key: 'posts', label: '接口文章' },
   { key: 'category', label: '分类管理' },
   { key: 'comment', label: '评论管理' },
   { key: 'settings', label: '系统设置' },
@@ -56,11 +58,15 @@ const articles = [
 ];
 
 function App() {
-  const [currentMenu, setCurrentMenu] = useState('article');
+  const [currentMenu, setCurrentMenu] = useState('posts');
 
   function renderContent() {
     if (currentMenu === 'dashboard') {
       return <Dashboard articleCount={articles.length} />;
+    }
+
+    if (currentMenu === 'posts') {
+      return <PostList />;
     }
 
     if (currentMenu === 'category') {

@@ -1,0 +1,25 @@
+{
+  "name": "hexa-cms",
+  "version": "1.0.0",
+  "description": "Hexa CMS full-stack practice project",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run api --prefix hexa-cms-server\" \"npm start --prefix hexa-cms-admin\"",
+    "start:server": "npm run api --prefix hexa-cms-server",
+    "start:client": "npm start --prefix hexa-cms-admin"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qyx040914/hexa-cms.git"
+  },
+  "author": "钱宇歆",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/qyx040914/hexa-cms/issues"
+  },
+  "homepage": "https://github.com/qyx040914/hexa-cms#readme",
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}
