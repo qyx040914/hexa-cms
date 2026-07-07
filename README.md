@@ -1,6 +1,6 @@
 # Hexa CMS
 
-Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程和前端组件化开发的示例项目。
+Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程、React 前端组件化开发和 Node.js 后端开发的示例项目。
 
 ## 练习目标
 
@@ -12,6 +12,7 @@ Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程和前端组件
 - 练习冲突解决
 - 使用 React 创建后台管理页面
 - 使用 React State、Props 和条件渲染实现动态页面
+- 使用 Node.js、NPM 和异步回调创建后端练习项目
 
 ## 当前内容
 
@@ -20,6 +21,7 @@ Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程和前端组件
 - `login.html`：登录页面练习
 - `members.md`：成员信息练习
 - `hexa-cms-admin/`：React 后台管理页面练习
+- `hexa-cms-server/`：Node.js 后端练习
 
 ## Class3 React 练习
 
@@ -32,7 +34,7 @@ Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程和前端组件
 
 ## Class4 React 练习
 
-在 Class3 静态后台基础上，继续完成了 React 状态管理与动态渲染：
+在 Class3 静态后台基础上，继续完成 React 状态管理与动态渲染：
 
 - 在 `App.js` 中使用 `useState` 保存当前菜单
 - 通过 Props 将菜单数据、文章数据和切换函数传给子组件
@@ -41,9 +43,29 @@ Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程和前端组件
 - 在 `ArticleList` 中使用 State 实现文章标题搜索
 - 新增 `Dashboard`、`CategoryPanel`、`CommentPanel`、`SystemSettings` 页面组件
 
-本地运行方式：
+## Class5 Node.js 练习
+
+`hexa-cms-server` 用于练习 Node.js 后端基础：
+
+- 使用 `npm init` 创建 `package.json`
+- 使用 `npm install colors --save` 安装第三方依赖
+- 使用 `module.exports` 和 `require` 练习模块导入导出
+- 使用 `fs.readFile` 演示异步非阻塞 I/O
+- 使用错误优先回调处理文件读取异常
+- 在 `.gitignore` 中忽略 `node_modules/`
+
+## 本地运行
+
+前端：
 
 ```bash
 cd hexa-cms-admin
+npm start
+```
+
+后端：
+
+```bash
+cd hexa-cms-server
 npm start
 ```
