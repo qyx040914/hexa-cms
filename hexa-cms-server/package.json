@@ -1,0 +1,17 @@
+{
+  "name": "hexa-cms-server",
+  "version": "1.0.0",
+  "description": "Hexa-CMS 后端 API 服务与 Node.js 异步编程练习",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "demo": "node index.js"
+  },
+  "keywords": [],
+  "author": "钱宇歆",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "colors": "^1.4.0"
+  }
+}
