@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "demo": "node index.js"
+    "demo": "node index.js",
+    "promise": "node promise-chain-demo.js",
+    "dashboard": "node dashboard-demo.js",
+    "server": "node async-blog-server.js"
   },
   "keywords": [],
   "author": "钱宇歆",

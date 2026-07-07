@@ -1,8 +1,8 @@
 # Hexa CMS Server
 
-这是 Class5 的 Node.js 后端练习项目，用来演示 NPM、CommonJS 模块、第三方依赖和异步非阻塞 I/O。
+这是 Hexa CMS 的 Node.js 后端练习项目，用来演示 NPM、CommonJS 模块、第三方依赖、异步非阻塞 I/O、Promise 和 Async/Await。
 
-## 已完成内容
+## Class5 已完成内容
 
 - 使用 `npm init` 创建 `package.json`
 - 安装 `colors` 依赖
@@ -11,16 +11,40 @@
 - 使用 `fs.readFile` 演示异步读取文件
 - 按照 Node 规范处理错误优先回调参数 `err`
 
-## 运行方式
+运行 Class5 示例：
 
 ```bash
 npm start
 ```
 
-预期输出顺序会体现异步非阻塞特征：
+## Class6 已完成内容
+
+- 创建 `file-utils.js`，手动封装 `readFilePromise`
+- 创建 `promise-chain-demo.js`，使用 `.then()` 链式调用串行读取文件
+- 创建 `async-blog-server.js`，使用 `async/await` 渲染 CMS 博客页面
+- 创建 `dashboard-demo.js`，使用 `Promise.all` 并行加载仪表盘数据
+- 创建 `titles.json` 和 `template.html` 作为模拟 CMS 数据与模板
+
+运行 Promise 链式调用示例：
+
+```bash
+npm run promise
+```
+
+运行 Promise.all 并行加载示例：
+
+```bash
+npm run dashboard
+```
+
+运行 Async/Await HTTP 服务：
+
+```bash
+npm run server
+```
+
+然后在浏览器访问：
 
 ```text
-1. 开始通知系统异步读取文章数据
-2. 不等待文件读取，主线程继续处理其他任务
-3. 文件读取完成，内容如下：
+http://127.0.0.1:8000
 ```

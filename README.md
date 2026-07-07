@@ -54,6 +54,16 @@ Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程、React 前端
 - 使用错误优先回调处理文件读取异常
 - 在 `.gitignore` 中忽略 `node_modules/`
 
+## Class6 Promise 与 Async/Await 练习
+
+在 Class5 后端基础上继续完成异步流程优化：
+
+- 使用 Promise 封装 `fs.readFile`
+- 使用 `.then()` 链式调用按顺序读取标题数据和 HTML 模板
+- 使用 `async/await` 重构 CMS 页面渲染流程
+- 使用 `try...catch` 统一捕获异步错误
+- 使用 `Promise.all` 并行加载 Dashboard 数据
+
 ## 本地运行
 
 前端：
@@ -68,4 +78,13 @@ npm start
 ```bash
 cd hexa-cms-server
 npm start
+```
+
+Class6 示例：
+
+```bash
+cd hexa-cms-server
+npm run promise
+npm run dashboard
+npm run server
 ```
