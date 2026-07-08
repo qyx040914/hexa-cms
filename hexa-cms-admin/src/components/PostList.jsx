@@ -66,14 +66,27 @@ function PostList() {
             <span>作者</span>
             <span>状态</span>
             <span>发布时间</span>
+            <span>操作</span>
           </div>
           {posts.map((post) => (
             <div className="table-row" key={post._id || post.id}>
               <span>{post._id || post.id}</span>
-              <span>{post.title}</span>
+              <strong>
+                <Link className="table-link" to={`/post/${post._id || post.id}`}>
+                  {post.title}
+                </Link>
+              </strong>
               <span>{post.author}</span>
               <span>{formatStatus(post.status)}</span>
               <span>{formatDate(post.createdAt)}</span>
+              <span className="row-actions">
+                <Link className="btn-edit" to={`/post/edit/${post._id || post.id}`}>
+                  编辑
+                </Link>
+                <Link className="btn-detail" to={`/post/${post._id || post.id}`}>
+                  查看详情
+                </Link>
+              </span>
             </div>
           ))}
         </div>
