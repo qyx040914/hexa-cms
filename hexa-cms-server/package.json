@@ -16,8 +16,10 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "colors": "^1.4.0",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "mongoose": "^9.7.4"
   }
 }
