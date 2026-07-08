@@ -11,7 +11,7 @@ function App() {
         <header className="route-header">
           <div>
             <h1>Hexa-CMS Dashboard</h1>
-            <p>MERN 全栈后台认证与内容管理</p>
+            <p>MERN 全栈后台认证与文章管理</p>
           </div>
         </header>
 

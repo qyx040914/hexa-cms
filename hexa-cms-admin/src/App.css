@@ -196,7 +196,7 @@
 }
 
 .mongo-table .table-row {
-  grid-template-columns: 1.2fr 2fr 1fr 1fr;
+  grid-template-columns: 1.4fr 2fr 1fr 0.8fr 1.2fr;
 }
 
 .route-shell {

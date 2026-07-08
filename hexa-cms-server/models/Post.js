@@ -13,8 +13,13 @@ const postSchema = new mongoose.Schema({
   },
   author: {
     type: String,
-    default: 'Admin',
+    required: true,
     trim: true,
+  },
+  status: {
+    type: String,
+    enum: ['draft', 'published'],
+    default: 'published',
   },
   createdAt: {
     type: Date,
