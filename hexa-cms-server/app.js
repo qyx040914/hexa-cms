@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const session = require('express-session');
 const Post = require('./models/Post');
-const User = require('./models/User');
-const { hashPassword, sanitizeUser } = require('./utils/password');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -26,14 +26,26 @@ const demoPosts = [
   },
   {
     id: 3,
-    title: 'RESTful API 与内容协商',
-    content: '使用 HTTP 谓词、状态码、Accept 请求头和认证中间件规范接口。',
+    title: 'API 安全认证与前端路由实战',
+    content: '使用 Session、bcrypt 和 React Router 打通注册登录流程。',
     author: '钱宇歆',
     createdAt: new Date('2026-07-08T09:20:00.000Z'),
   },
 ];
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'hexa-cms-super-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      sameSite: 'lax',
+    },
+  })
+);
 
 mongoose
   .connect(mongoUri, {
@@ -100,10 +112,7 @@ function sendPosts(req, res, posts) {
 }
 
 function sendError(res, status, message, details) {
-  res.status(status).json({
-    error: message,
-    details,
-  });
+  res.status(status).json({ error: message, details });
 }
 
 function requireMongo(req, res, next) {
@@ -137,84 +146,7 @@ function validatePostPayload(req, res, next) {
   next();
 }
 
-function validateRegisterPayload(req, res, next) {
-  const { username, password, password_repeat } = req.body;
-
-  if (!username || !password) {
-    sendError(res, 400, '用户名或密码不能为空！');
-    return;
-  }
-
-  if (password !== password_repeat) {
-    sendError(res, 400, '两次输入的口令不一致！');
-    return;
-  }
-
-  next();
-}
-
-function validateLoginPayload(req, res, next) {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    sendError(res, 400, '用户名或密码不能为空！');
-    return;
-  }
-
-  next();
-}
-
-app.post('/api/users/register', validateRegisterPayload, requireMongo, async function registerUser(req, res) {
-  try {
-    const { username, password } = req.body;
-    const existingUser = await User.findOne({ username });
-
-    if (existingUser) {
-      sendError(res, 400, '该用户已存在！');
-      return;
-    }
-
-    const newUser = new User({
-      username,
-      password: hashPassword(password),
-    });
-
-    await newUser.save();
-
-    res.status(201).json({
-      success: true,
-      message: '注册成功！',
-      data: sanitizeUser(newUser),
-    });
-  } catch (err) {
-    sendError(res, 500, '服务器内部错误', err.message);
-  }
-});
-
-app.post('/api/users/login', validateLoginPayload, requireMongo, async function loginUser(req, res) {
-  try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
-
-    if (!user) {
-      sendError(res, 404, '用户不存在');
-      return;
-    }
-
-    if (user.password !== hashPassword(password)) {
-      sendError(res, 401, '密码错误');
-      return;
-    }
-
-    res.status(200).json({
-      success: true,
-      message: '登录成功！',
-      data: sanitizeUser(user),
-    });
-  } catch (err) {
-    sendError(res, 500, '服务器内部错误', err.message);
-  }
-});
+app.use('/api/auth', authRoutes);
 
 app.get('/api/posts', async function getPosts(req, res) {
   try {
@@ -319,6 +251,7 @@ app.get('/api/health', function getHealth(req, res) {
     service: 'hexa-cms-server',
     database: isMongoReady() ? 'connected' : 'disconnected',
     mongoUri,
+    auth: 'session-enabled',
   });
 });
 
@@ -327,5 +260,5 @@ app.use(function notFound(req, res) {
 });
 
 app.listen(port, () => {
-  console.log(`Express RESTful API 服务器已启动：http://localhost:${port}`);
+  console.log(`Express MERN API 服务器已启动：http://localhost:${port}`);
 });

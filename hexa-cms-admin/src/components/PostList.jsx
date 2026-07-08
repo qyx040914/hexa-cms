@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -13,6 +14,7 @@ function PostList() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const currentUser = JSON.parse(localStorage.getItem('cms_user') || 'null');
 
   useEffect(() => {
     axios
@@ -31,12 +33,15 @@ function PostList() {
   }, []);
 
   return (
-    <section className="content-panel">
-      <div className="content-header">
+    <main className="post-page">
+      <div className="post-toolbar">
         <div>
-          <h2>数据库文章列表</h2>
-          <p>通过 Axios 请求 Express + Mongoose 接口，并由 React 动态渲染文章数据</p>
+          <h2>后台文章数据</h2>
+          <p>登录用户：{currentUser?.username || '未读取到用户信息'}</p>
         </div>
+        <Link className="text-action" to="/login">
+          返回登录
+        </Link>
       </div>
 
       {loading && <p className="empty-tip">正在从 Express 后端加载数据...</p>}
@@ -60,7 +65,7 @@ function PostList() {
           ))}
         </div>
       )}
-    </section>
+    </main>
   );
 }
 

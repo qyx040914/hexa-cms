@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders admin layout title', () => {
+test('renders dashboard title', () => {
   render(<App />);
-  const titleElement = screen.getByText(/Hexa CMS 管理后台/i);
+  const titleElement = screen.getByText(/Hexa-CMS Dashboard/i);
   expect(titleElement).toBeInTheDocument();
 });

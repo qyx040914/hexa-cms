@@ -11,30 +11,26 @@ Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程、React 前端
 - `login.html`：登录页面练习
 - `members.md`：成员信息练习
 
-## Class10 MongoDB 接入与用户注册 API
+## Class12 API 安全认证与前端路由
 
-- 新增 `models/User.js`
-- 新增用户 Schema：
-  - `username`
-  - `password`
-  - `createdAt`
-- 新增 `utils/password.js`
-- 使用 Node 内置 `crypto` 对密码做 MD5 哈希
-- 实现管理员注册接口：
-  - `POST /api/users/register`
-- 实现用户登录接口：
-  - `POST /api/users/login`
-- 注册接口支持：
-  - 用户名和密码不能为空
-  - 两次密码必须一致
-  - 用户名不能重复
-  - 注册成功返回 `201 Created`
-  - 不返回密码字段
-- 登录接口支持：
-  - 用户不存在返回 `404`
-  - 密码错误返回 `401`
-  - 登录成功返回 `200`
-  - 不返回密码字段
+- 后端安装并使用 `express-session`
+- 后端安装并使用 `bcrypt`
+- 新增认证路由文件 `hexa-cms-server/routes/auth.js`
+- 新增 API：
+  - `POST /api/auth/register`
+  - `POST /api/auth/login`
+  - `POST /api/auth/logout`
+  - `GET /api/auth/me`
+- 注册时使用 bcrypt 加盐哈希保存密码
+- 登录时使用 bcrypt.compare 校验密码
+- 登录成功后写入 `req.session.user`
+- 前端安装 `react-router-dom`
+- 前端新增路由：
+  - `/login`
+  - `/register`
+  - `/post`
+- 注册成功后通过 `navigate('/login', { state })` 传递成功提示
+- 登录成功后保存用户信息到 `localStorage` 并跳转文章列表
 
 ## 本地运行
 
@@ -51,33 +47,23 @@ cd hexa-cms-server
 npm run api
 ```
 
+前端：
+
+```bash
+cd hexa-cms-admin
+npm start
+```
+
 MongoDB 默认连接地址：
 
 ```text
 mongodb://localhost:27017/hexa_cms
 ```
 
-注册测试请求：
+前端页面：
 
-```http
-POST /api/users/register
-Content-Type: application/json
-
-{
-  "username": "admin",
-  "password": "123",
-  "password_repeat": "123"
-}
-```
-
-登录测试请求：
-
-```http
-POST /api/users/login
-Content-Type: application/json
-
-{
-  "username": "admin",
-  "password": "123"
-}
+```text
+http://localhost:3000/login
+http://localhost:3000/register
+http://localhost:3000/post
 ```
