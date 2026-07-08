@@ -4,8 +4,8 @@ module.exports = {
       name: 'hexa-cms-api',
       script: 'app.js',
       cwd: '/var/www/hexa-cms/hexa-cms-server',
-      instances: 1,
-      exec_mode: 'fork',
+      instances: 'max',
+      exec_mode: 'cluster',
       env_production: {
         NODE_ENV: 'production',
         PORT: 5000,
