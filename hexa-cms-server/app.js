@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 
 if (!globalThis.crypto) {
   globalThis.crypto = require('crypto').webcrypto;
@@ -10,8 +12,21 @@ const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
 
 const app = express();
+const server = http.createServer(app);
 const port = process.env.PORT || 5000;
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/hexa_cms';
+const socketOrigins = (process.env.SOCKET_CORS_ORIGIN || 'http://localhost:3000,http://127.0.0.1:3000,http://114.55.63.161')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const io = new Server(server, {
+  cors: {
+    origin: socketOrigins,
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -52,10 +67,24 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+io.on('connection', (socket) => {
+  console.log(`WebSocket client connected: ${socket.id}`);
+
+  socket.emit('server:welcome', {
+    message: 'WebSocket connected',
+    socketId: socket.id,
+    connectedAt: new Date().toISOString(),
+  });
+
+  socket.on('disconnect', (reason) => {
+    console.log(`WebSocket client disconnected: ${socket.id}, reason: ${reason}`);
+  });
+});
+
 app.use((req, res) => {
   res.status(404).json({ error: '请求的资源不存在' });
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Express MERN API 服务器已启动：http://localhost:${port}`);
 });
