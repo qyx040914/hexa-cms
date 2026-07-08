@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-d
 import Login from './components/Login';
 import Register from './components/Register';
 import PostList from './components/PostList';
+import PostCreate from './components/PostCreate';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/post" element={<PostList />} />
+          <Route path="/post/new" element={<PostCreate />} />
         </Routes>
       </div>
     </Router>

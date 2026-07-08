@@ -105,8 +105,9 @@ function requireAdmin(req, res, next) {
 
 function validatePostPayload(req, res, next) {
   const { title, content, author } = req.body;
+  const plainContent = String(content || '').replace(/<[^>]*>/g, '').trim();
 
-  if (!title || !content || !author) {
+  if (!title || !author || !plainContent) {
     sendError(res, 400, '请求格式错误：title、content 和 author 为必填字段');
     return;
   }
