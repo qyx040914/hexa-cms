@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Post = require('./models/Post');
+const User = require('./models/User');
+const { hashPassword, sanitizeUser } = require('./utils/password');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -134,6 +136,85 @@ function validatePostPayload(req, res, next) {
 
   next();
 }
+
+function validateRegisterPayload(req, res, next) {
+  const { username, password, password_repeat } = req.body;
+
+  if (!username || !password) {
+    sendError(res, 400, '用户名或密码不能为空！');
+    return;
+  }
+
+  if (password !== password_repeat) {
+    sendError(res, 400, '两次输入的口令不一致！');
+    return;
+  }
+
+  next();
+}
+
+function validateLoginPayload(req, res, next) {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    sendError(res, 400, '用户名或密码不能为空！');
+    return;
+  }
+
+  next();
+}
+
+app.post('/api/users/register', validateRegisterPayload, requireMongo, async function registerUser(req, res) {
+  try {
+    const { username, password } = req.body;
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      sendError(res, 400, '该用户已存在！');
+      return;
+    }
+
+    const newUser = new User({
+      username,
+      password: hashPassword(password),
+    });
+
+    await newUser.save();
+
+    res.status(201).json({
+      success: true,
+      message: '注册成功！',
+      data: sanitizeUser(newUser),
+    });
+  } catch (err) {
+    sendError(res, 500, '服务器内部错误', err.message);
+  }
+});
+
+app.post('/api/users/login', validateLoginPayload, requireMongo, async function loginUser(req, res) {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      sendError(res, 404, '用户不存在');
+      return;
+    }
+
+    if (user.password !== hashPassword(password)) {
+      sendError(res, 401, '密码错误');
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: '登录成功！',
+      data: sanitizeUser(user),
+    });
+  } catch (err) {
+    sendError(res, 500, '服务器内部错误', err.message);
+  }
+});
 
 app.get('/api/posts', async function getPosts(req, res) {
   try {
