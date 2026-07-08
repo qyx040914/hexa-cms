@@ -11,29 +11,30 @@ Hexa CMS 是一个用于练习企业级 Git、GitHub 协作流程、React 前端
 - `login.html`：登录页面练习
 - `members.md`：成员信息练习
 
-## Class9 RESTful API 与内容协商
+## Class10 MongoDB 接入与用户注册 API
 
-- 按 RESTful 风格重构文章接口
-- 使用 HTTP 谓词表达 CRUD：
-  - `GET /api/posts`
-  - `GET /api/posts/:id`
-  - `POST /api/posts`
-  - `PUT /api/posts/:id`
-  - `DELETE /api/posts/:id`
-- 使用标准 HTTP 状态码：
-  - `200 OK`
-  - `201 Created`
-  - `204 No Content`
-  - `400 Bad Request`
-  - `401 Unauthorized`
-  - `404 Not Found`
-  - `406 Not Acceptable`
-  - `503 Service Unavailable`
-- 使用 `res.format()` 支持内容协商：
-  - `Accept: application/json`
-  - `Accept: application/xml`
-- 新增 `requireAuth` 中间件，保护 POST、PUT、DELETE 写操作
-- 当创建或更新文章缺少 `title` 或 `content` 时返回 `400 Bad Request`
+- 新增 `models/User.js`
+- 新增用户 Schema：
+  - `username`
+  - `password`
+  - `createdAt`
+- 新增 `utils/password.js`
+- 使用 Node 内置 `crypto` 对密码做 MD5 哈希
+- 实现管理员注册接口：
+  - `POST /api/users/register`
+- 实现用户登录接口：
+  - `POST /api/users/login`
+- 注册接口支持：
+  - 用户名和密码不能为空
+  - 两次密码必须一致
+  - 用户名不能重复
+  - 注册成功返回 `201 Created`
+  - 不返回密码字段
+- 登录接口支持：
+  - 用户不存在返回 `404`
+  - 密码错误返回 `401`
+  - 登录成功返回 `200`
+  - 不返回密码字段
 
 ## 本地运行
 
@@ -50,21 +51,33 @@ cd hexa-cms-server
 npm run api
 ```
 
-前端：
-
-```bash
-cd hexa-cms-admin
-npm start
-```
-
-写操作测试请求头：
-
-```text
-X-Admin-Token: hexa-admin-token
-```
-
 MongoDB 默认连接地址：
 
 ```text
 mongodb://localhost:27017/hexa_cms
+```
+
+注册测试请求：
+
+```http
+POST /api/users/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123",
+  "password_repeat": "123"
+}
+```
+
+登录测试请求：
+
+```http
+POST /api/users/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123"
+}
 ```
