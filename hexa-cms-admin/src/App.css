@@ -195,6 +195,10 @@
   grid-template-columns: 0.6fr 2fr 1fr;
 }
 
+.mongo-table .table-row {
+  grid-template-columns: 1.2fr 2fr 1fr 1fr;
+}
+
 .stats-grid {
   display: grid;
   gap: 16px;
