@@ -1,22 +1,36 @@
 # Hexa CMS Server
 
-这是 Hexa CMS 的 Node.js 后端练习项目，包含 Express API、异步编程、Promise、Async/Await，以及 MongoDB / Mongoose 建模示例。
+这是 Hexa CMS 的 Node.js 后端练习项目，包含 Express API、异步编程、Promise、Async/Await、MongoDB / Mongoose 建模和 RESTful API 示例。
 
-## Class8 已完成内容
+## Class9 已完成内容
 
-- 安装 `mongoose`
-- 创建 `models/Post.js`
-- 定义文章 Schema 与 Model
-- 在 `app.js` 中连接 MongoDB
-- 使用 `express.json()` 支持 JSON 请求体
-- 实现文章 CRUD 接口
+- 使用 RESTful 风格重构文章接口
+- 使用准确的 HTTP 状态码表达结果
+- 使用 `res.format()` 支持 JSON 与 XML 内容协商
+- 使用 `requireAuth` 中间件保护写操作
+- 使用 `validatePostPayload` 校验 `title` 和 `content`
+- 缺少必填字段时返回 `400 Bad Request`
 
 ## API
 
-查询文章：
+查询文章列表：
 
 ```http
 GET /api/posts
+Accept: application/json
+```
+
+查询 XML 格式文章列表：
+
+```http
+GET /api/posts
+Accept: application/xml
+```
+
+查询文章详情：
+
+```http
+GET /api/posts/:id
 ```
 
 新增文章：
@@ -24,10 +38,11 @@ GET /api/posts
 ```http
 POST /api/posts
 Content-Type: application/json
+X-Admin-Token: hexa-admin-token
 
 {
-  "title": "MongoDB 与 Mongoose 建模实战",
-  "content": "使用 Mongoose Schema 约束文章数据。",
+  "title": "RESTful API 与内容协商",
+  "content": "使用 HTTP 谓词、状态码和 Accept 请求头规范接口。",
   "author": "钱宇歆"
 }
 ```
@@ -37,6 +52,7 @@ Content-Type: application/json
 ```http
 PUT /api/posts/:id
 Content-Type: application/json
+X-Admin-Token: hexa-admin-token
 
 {
   "title": "更新后的标题",
@@ -49,6 +65,7 @@ Content-Type: application/json
 
 ```http
 DELETE /api/posts/:id
+X-Admin-Token: hexa-admin-token
 ```
 
 ## 运行

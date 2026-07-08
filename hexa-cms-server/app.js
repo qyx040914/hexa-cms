@@ -5,6 +5,7 @@ const Post = require('./models/Post');
 const app = express();
 const port = process.env.PORT || 5000;
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/hexa_cms';
+const adminToken = process.env.ADMIN_TOKEN || 'hexa-admin-token';
 
 const demoPosts = [
   {
@@ -23,8 +24,8 @@ const demoPosts = [
   },
   {
     id: 3,
-    title: 'Mongoose 建模与 CRUD 实战',
-    content: '使用 Schema 约束文章数据，并完成增删改查接口。',
+    title: 'RESTful API 与内容协商',
+    content: '使用 HTTP 谓词、状态码、Accept 请求头和认证中间件规范接口。',
     author: '钱宇歆',
     createdAt: new Date('2026-07-08T09:20:00.000Z'),
   },
@@ -47,18 +48,6 @@ function isMongoReady() {
   return mongoose.connection.readyState === 1;
 }
 
-function requireMongo(res) {
-  if (isMongoReady()) {
-    return true;
-  }
-
-  res.status(503).json({
-    error: 'MongoDB 未连接，请先启动本地 MongoDB 服务',
-    mongoUri,
-  });
-  return false;
-}
-
 function normalizePost(post) {
   if (!post._id) {
     return post;
@@ -74,25 +63,117 @@ function normalizePost(post) {
   };
 }
 
+function escapeXml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function postsToXml(posts) {
+  const entries = posts
+    .map(
+      (post) => `
+  <post>
+    <id>${escapeXml(post._id || post.id)}</id>
+    <title>${escapeXml(post.title)}</title>
+    <content>${escapeXml(post.content)}</content>
+    <author>${escapeXml(post.author)}</author>
+    <createdAt>${escapeXml(post.createdAt)}</createdAt>
+  </post>`
+    )
+    .join('');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<posts>${entries}\n</posts>`;
+}
+
+function sendPosts(req, res, posts) {
+  res.status(200).format({
+    'application/json': () => res.json(posts),
+    'application/xml': () => res.type('application/xml').send(postsToXml(posts)),
+    default: () => res.status(406).json({ error: '仅支持 application/json 或 application/xml' }),
+  });
+}
+
+function sendError(res, status, message, details) {
+  res.status(status).json({
+    error: message,
+    details,
+  });
+}
+
+function requireMongo(req, res, next) {
+  if (isMongoReady()) {
+    next();
+    return;
+  }
+
+  sendError(res, 503, 'MongoDB 未连接，请先启动本地 MongoDB 服务', { mongoUri });
+}
+
+function requireAuth(req, res, next) {
+  const token = req.get('X-Admin-Token');
+
+  if (token !== adminToken) {
+    sendError(res, 401, '您没有访问此 API 的权限，请在请求头中提供有效的 X-Admin-Token');
+    return;
+  }
+
+  next();
+}
+
+function validatePostPayload(req, res, next) {
+  const { title, content } = req.body;
+
+  if (!title || !content) {
+    sendError(res, 400, '请求格式错误：title 和 content 为必填字段');
+    return;
+  }
+
+  next();
+}
+
 app.get('/api/posts', async function getPosts(req, res) {
   try {
     if (!isMongoReady()) {
-      res.json(demoPosts);
+      sendPosts(req, res, demoPosts);
       return;
     }
 
     const posts = await Post.find().sort({ createdAt: 'descending' });
-    res.json(posts.map(normalizePost));
+    sendPosts(req, res, posts.map(normalizePost));
   } catch (err) {
-    res.status(500).json({ error: '查询文章失败' });
+    sendError(res, 500, '服务器内部错误：查询文章失败');
   }
 });
 
-app.post('/api/posts', async function createPost(req, res) {
-  if (!requireMongo(res)) {
-    return;
-  }
+app.get('/api/posts/:id', async function getPostById(req, res) {
+  try {
+    if (!isMongoReady()) {
+      const post = demoPosts.find((item) => String(item.id) === req.params.id);
+      if (!post) {
+        sendError(res, 404, '文章不存在');
+        return;
+      }
+      res.status(200).json(post);
+      return;
+    }
 
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      sendError(res, 404, '文章不存在');
+      return;
+    }
+
+    res.status(200).json(normalizePost(post));
+  } catch (err) {
+    sendError(res, 400, '请求格式错误：文章 ID 无效');
+  }
+});
+
+app.post('/api/posts', requireAuth, validatePostPayload, requireMongo, async function createPost(req, res) {
   try {
     const { title, content, author } = req.body;
     const newPost = new Post({ title, content, author });
@@ -103,15 +184,11 @@ app.post('/api/posts', async function createPost(req, res) {
       post: normalizePost(savedPost),
     });
   } catch (err) {
-    res.status(400).json({ error: '插入失败，请检查数据格式' });
+    sendError(res, 400, '请求格式错误：插入失败，请检查数据格式', err.message);
   }
 });
 
-app.put('/api/posts/:id', async function updatePost(req, res) {
-  if (!requireMongo(res)) {
-    return;
-  }
-
+app.put('/api/posts/:id', requireAuth, validatePostPayload, requireMongo, async function updatePost(req, res) {
   try {
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.id,
@@ -127,40 +204,36 @@ app.put('/api/posts/:id', async function updatePost(req, res) {
     );
 
     if (!updatedPost) {
-      res.status(404).json({ error: '文章不存在' });
+      sendError(res, 404, '文章不存在');
       return;
     }
 
-    res.json({
+    res.status(200).json({
       message: '文章更新成功！',
       post: normalizePost(updatedPost),
     });
   } catch (err) {
-    res.status(400).json({ error: '更新失败，请检查文章 ID 或数据格式' });
+    sendError(res, 400, '请求格式错误：更新失败，请检查文章 ID 或数据格式', err.message);
   }
 });
 
-app.delete('/api/posts/:id', async function deletePost(req, res) {
-  if (!requireMongo(res)) {
-    return;
-  }
-
+app.delete('/api/posts/:id', requireAuth, requireMongo, async function deletePost(req, res) {
   try {
     const deletedPost = await Post.findByIdAndDelete(req.params.id);
 
     if (!deletedPost) {
-      res.status(404).json({ error: '文章不存在' });
+      sendError(res, 404, '文章不存在');
       return;
     }
 
-    res.json({ message: '文章删除成功！' });
+    res.status(204).end();
   } catch (err) {
-    res.status(400).json({ error: '删除失败，请检查文章 ID' });
+    sendError(res, 400, '请求格式错误：删除失败，请检查文章 ID', err.message);
   }
 });
 
 app.get('/api/health', function getHealth(req, res) {
-  res.json({
+  res.status(200).json({
     status: 'ok',
     service: 'hexa-cms-server',
     database: isMongoReady() ? 'connected' : 'disconnected',
@@ -168,6 +241,10 @@ app.get('/api/health', function getHealth(req, res) {
   });
 });
 
+app.use(function notFound(req, res) {
+  sendError(res, 404, '请求的资源不存在');
+});
+
 app.listen(port, () => {
-  console.log(`Express API 服务器已启动：http://localhost:${port}`);
+  console.log(`Express RESTful API 服务器已启动：http://localhost:${port}`);
 });
