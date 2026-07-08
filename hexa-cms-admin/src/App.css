@@ -306,6 +306,7 @@
 .post-toolbar {
   align-items: center;
   display: flex;
+  gap: 16px;
   justify-content: space-between;
   margin-bottom: 20px;
 }
@@ -318,6 +319,88 @@
 .post-toolbar p {
   color: #64748b;
   margin-top: 6px;
+}
+
+.toolbar-actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.primary-link {
+  background: #2563eb;
+  border-radius: 6px;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 10px 14px;
+  text-decoration: none;
+}
+
+.post-create-page {
+  max-width: 900px;
+}
+
+.post-create-form {
+  display: grid;
+  gap: 18px;
+}
+
+.post-create-form label,
+.editor-field {
+  display: grid;
+  gap: 8px;
+}
+
+.post-create-form span,
+.editor-field > span {
+  color: #334155;
+  font-weight: 700;
+}
+
+.post-create-form input {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 15px;
+  padding: 11px 12px;
+}
+
+.editor-field .ql-container {
+  min-height: 240px;
+}
+
+.editor-field .ql-editor {
+  min-height: 240px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.form-actions button,
+.form-actions a {
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 11px 16px;
+  text-decoration: none;
+}
+
+.form-actions button {
+  background: #16a34a;
+  border: 0;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.form-actions button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.form-actions a {
+  background: #e2e8f0;
+  color: #334155;
 }
 
 .stats-grid {
@@ -424,5 +507,12 @@
 
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .post-toolbar,
+  .toolbar-actions,
+  .form-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 }

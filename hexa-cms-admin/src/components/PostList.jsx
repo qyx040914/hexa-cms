@@ -43,9 +43,14 @@ function PostList() {
           <h2>后台文章数据</h2>
           <p>登录用户：{currentUser?.username || '未读取到用户信息'}</p>
         </div>
-        <Link className="text-action" to="/login">
-          返回登录
-        </Link>
+        <div className="toolbar-actions">
+          <Link className="primary-link" to="/post/new">
+            发布新文章
+          </Link>
+          <Link className="text-action" to="/login">
+            返回登录
+          </Link>
+        </div>
       </div>
 
       {loading && <p className="empty-tip">正在从 Express 后端拉取数据...</p>}
