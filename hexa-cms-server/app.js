@@ -1,4 +1,9 @@
 const express = require('express');
+
+if (!globalThis.crypto) {
+  globalThis.crypto = require('crypto').webcrypto;
+}
+
 const mongoose = require('mongoose');
 const session = require('express-session');
 const authRoutes = require('./routes/auth');
