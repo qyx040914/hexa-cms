@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import Navbar from './components/Navbar';
@@ -23,11 +23,14 @@ function getSocketUrl() {
 }
 
 function App() {
+  const [alertMsg, setAlertMsg] = useState('');
+
   useEffect(() => {
     const socket = io(getSocketUrl(), {
       transports: ['websocket'],
       withCredentials: true,
     });
+    let alertTimer;
 
     socket.on('connect', () => {
       console.log(`WebSocket connected: ${socket.id}`);
@@ -41,13 +44,31 @@ function App() {
       console.error('WebSocket connection failed:', error.message);
     });
 
+    const handleNewPostAlert = (data) => {
+      const author = data?.author || '有成员';
+      const title = data?.title || '未命名文章';
+
+      console.log('New post alert received:', data);
+      setAlertMsg(`系统通知：${author} 刚刚发布了新文章《${title}》`);
+
+      window.clearTimeout(alertTimer);
+      alertTimer = window.setTimeout(() => {
+        setAlertMsg('');
+      }, 5000);
+    };
+
+    socket.on('new_post_alert', handleNewPostAlert);
+
     return () => {
+      window.clearTimeout(alertTimer);
+      socket.off('new_post_alert', handleNewPostAlert);
       socket.disconnect();
     };
   }, []);
 
   return (
     <Router>
+      {alertMsg && <div className="realtime-alert">{alertMsg}</div>}
       <div className="route-shell">
         <div className="route-container">
           <Navbar />

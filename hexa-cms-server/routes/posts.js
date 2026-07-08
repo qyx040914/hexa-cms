@@ -158,10 +158,21 @@ router.post('/', validatePostPayload, requireMongo, async (req, res) => {
     const { title, content, author, status } = req.body;
     const newPost = new Post({ title, content, author, status });
     const savedPost = await newPost.save();
+    const post = normalizePost(savedPost);
+    const io = req.app.get('io');
+
+    if (io) {
+      io.emit('new_post_alert', {
+        id: post.id,
+        title: post.title,
+        author: post.author,
+        createdAt: post.createdAt,
+      });
+    }
 
     res.status(201).json({
       message: '文章发布成功！',
-      post: normalizePost(savedPost),
+      post,
     });
   } catch (err) {
     sendError(res, 400, '文章发布失败，请检查字段格式', err.message);
