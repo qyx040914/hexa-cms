@@ -6,7 +6,10 @@
   "scripts": {
     "start": "concurrently \"npm run api --prefix hexa-cms-server\" \"npm start --prefix hexa-cms-admin\"",
     "start:server": "npm run api --prefix hexa-cms-server",
-    "start:client": "npm start --prefix hexa-cms-admin"
+    "start:client": "npm start --prefix hexa-cms-admin",
+    "install:all": "npm install && npm install --prefix hexa-cms-server && npm install --prefix hexa-cms-admin",
+    "build:client": "npm run build --prefix hexa-cms-admin",
+    "deploy:pm2": "pm2 start hexa-cms-server/ecosystem.config.js --env production"
   },
   "repository": {
     "type": "git",
